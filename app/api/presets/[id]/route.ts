@@ -1,9 +1,9 @@
 import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function PUT(req: Request) {
-  const url = new URL(req.url);
-  const id = parseInt(url.pathname.split('/').pop() || '0');
+export async function PUT(req: NextRequest) {
+  const url = req.nextUrl.pathname;
+  const id = parseInt(url.split('/').pop() || '0');
 
   const body = await req.json();
   const updated = await prisma.bobotPreset.update({
@@ -17,11 +17,13 @@ export async function PUT(req: Request) {
   return NextResponse.json(updated);
 }
 
-export async function DELETE(req: Request) {
-  const url = new URL(req.url);
-  const id = parseInt(url.pathname.split('/').pop() || '0');
+export async function DELETE(req: NextRequest) {
+  const url = req.nextUrl.pathname;
+  const id = parseInt(url.split('/').pop() || '0');
 
-  await prisma.bobotPreset.delete({ where: { id } });
+  await prisma.bobotPreset.delete({
+    where: { id },
+  });
 
   return NextResponse.json({ success: true });
 }
