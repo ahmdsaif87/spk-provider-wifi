@@ -1,18 +1,58 @@
-export function hitungSAW(kriteria: any[], alternatif: any[], bobot: number[]) {
-  const normalisasi = alternatif.map(alt => ({
-    nama: alt.nama,
-    nilai: alt.nilai.map((v: number, i: number) => {
-      const kolom = alternatif.map((a: any) => a.nilai[i]);
-      const max = Math.max(...kolom);
-      const min = Math.min(...kolom);
-      return kriteria[i].tipe === 'benefit' ? v / max : min / v;
-    })
-  }));
+export type Kriteria = {
+  nama: string;
+  tipe: 'benefit' | 'cost';
+};
 
-  const hasil = normalisasi.map(alt => ({
-    nama: alt.nama,
-    skor: alt.nilai.reduce((acc: number, v: number, i: number) => acc + v * bobot[i], 0),
-  }));
+export type Alternatif = {
+  nama: string;
+  nilai: number[]; // nilai sesuai urutan kriteria
+};
 
-  return hasil.sort((a, b) => b.skor - a.skor);
+export type HasilSAW = {
+  nama: string;
+  nilai: number;
+  ranking: number;
+};
+
+export function hitungSAW(
+  kriteria: Kriteria[],
+  alternatif: Alternatif[],
+  bobot: number[]
+): HasilSAW[] {
+  // Transpose matrix (kolom-kolom nilai per kriteria)
+  const matrixT: number[][] = Array.from({ length: kriteria.length }, (_, i) =>
+    alternatif.map((alt) => alt.nilai[i])
+  );
+
+  // Normalisasi dan hitung skor total
+  const norm = alternatif.map((alt) => {
+    const normVals = alt.nilai.map((v, j) => {
+      const column = matrixT[j];
+      if (kriteria[j].tipe === 'benefit') {
+        const max = Math.max(...column);
+        return v / max;
+      } else {
+        const min = Math.min(...column);
+        return min / v;
+      }
+    });
+
+    const total = normVals.reduce((sum, val, idx) => sum + val * bobot[idx], 0);
+
+    return {
+      nama: alt.nama,
+      nilai: total,
+    };
+  });
+
+  // Ranking berdasarkan skor tertinggi
+  const sorted = norm
+    .sort((a, b) => b.nilai - a.nilai)
+    .map((v, i) => ({
+      ...v,
+      ranking: i + 1,
+      nilai: parseFloat(v.nilai.toFixed(4)),
+    }));
+
+  return sorted;
 }

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import BobotForm from '@/components/BobotForm';
 import RankingTable from '@/components/RankingTable';
 import { Label } from '@/components/ui/label';
-import { alternatif, kriteria } from '@/constants/data';
+import { alternatif } from '@/constants/data';
 import {
     Select,
     SelectContent,
