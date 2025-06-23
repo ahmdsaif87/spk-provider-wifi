@@ -9,7 +9,8 @@ import { kriteria } from '@/constants/data';
 export default function AdminBobotPage() {
     const [nama, setNama] = useState('');
     const [bobot, setBobot] = useState([0.2, 0.2, 0.2, 0.2, 0.2]);
-    const [presets, setPresets] = useState<any[]>([]);
+    type Preset = { id: number; nama: string; bobot: string };
+    const [presets, setPresets] = useState<Preset[]>([]);
 
     const fetchPresets = async () => {
         const res = await fetch('/api/presets');

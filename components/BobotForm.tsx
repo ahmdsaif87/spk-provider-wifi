@@ -48,7 +48,9 @@ export default function BobotForm({
                 </div>
             ))}
             {error && <p className="text-red-600 text-sm">{error}</p>}
-            <Button type="submit">Hitung</Button>
+            <div className="flex justify-center">
+                <Button type="submit" className="">Hitung</Button>
+            </div>
         </form>
     );
 }

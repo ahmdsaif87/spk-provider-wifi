@@ -14,10 +14,13 @@ import {
 } from '@/components/ui/select';
 
 export default function WifiPage() {
-    const [hasil, setHasil] = useState<any[]>([]);
     const [bobot, setBobot] = useState<number[]>([0.2, 0.2, 0.2, 0.2, 0.2]);
-    const [presets, setPresets] = useState<any[]>([]);
     const [selectedPresetId, setSelectedPresetId] = useState<string>('');
+    type Ranking = { nama: string; nilai: number; ranking: number };
+    type Preset = { id: number; nama: string; bobot: string };
+
+    const [hasil, setHasil] = useState<Ranking[]>([]);
+    const [presets, setPresets] = useState<Preset[]>([]);
 
     useEffect(() => {
         fetch('/api/presets')

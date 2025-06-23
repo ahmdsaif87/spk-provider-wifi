@@ -2,7 +2,8 @@
 
 import { Card, CardContent } from '@/components/ui/card';
 
-export default function RankingTable({ data }: { data: any[] }) {
+type Ranking = { nama: string; nilai: number; ranking: number };
+export default function RankingTable({ data }: { data: Ranking[] }) {
   return (
     <Card className="mt-6">
       <CardContent className="p-4">
