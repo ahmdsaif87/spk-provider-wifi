@@ -57,13 +57,10 @@ export default function BobotForm({ bobot, setBobot, onSubmit }: BobotFormProps)
       {error && (
         <p className="text-sm text-red-500 font-medium">{error}</p>
       )}
-
-      <div className="flex gap-2 mt-2 items-center justify-between">
-        <Button type="submit" className="w-70">Hitung Ranking</Button>
-        <Button type="button" variant="outline" className="w-70" onClick={handleReset}>
+        <Button type="submit" className='w-full'>Hitung Ranking</Button>
+        <Button type="button" variant="outline" className='w-full' onClick={handleReset}>
           Reset
         </Button>
-      </div>
     </form>
   );
 }
