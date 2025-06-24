@@ -202,7 +202,7 @@ export default function WifiPage() {
             <Card className="flex flex-col items-justify p-3 mb-3">
             <div className="mb-2">
                 <p className="text-sm font-medium text-muted-foreground mb-2">
-                    Masukkan bobot untuk tiap kriteria (total = 1) atau pilih preset di bawah
+                    Masukkan bobot untuk tiap kriteria (total = 1) atau gunakan preset yang ada
                 </p>
                 <Label className="mb-3 block">Pilih Bobot Preset</Label>
                 <Select onValueChange={handlePresetChange} value={selectedPresetId}>
