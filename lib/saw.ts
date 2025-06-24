@@ -1,58 +1,29 @@
-export type Kriteria = {
+type Alternatif = {
   nama: string;
-  tipe: 'benefit' | 'cost';
+  nilai: number[];
 };
 
-export type Alternatif = {
-  nama: string;
-  nilai: number[]; // nilai sesuai urutan kriteria
-};
+export function hitungSAW(alternatif: Alternatif[], bobot: number[]) {
+  const normal = alternatif.map((alt) => [...alt.nilai]);
+  const result: { nama: string; nilai: number }[] = [];
 
-export type HasilSAW = {
-  nama: string;
-  nilai: number;
-  ranking: number;
-};
+  for (let i = 0; i < 5; i++) {
+    const values = alternatif.map((alt) => alt.nilai[i]);
+    const max = Math.max(...values);
+    const min = Math.min(...values);
 
-export function hitungSAW(
-  kriteria: Kriteria[],
-  alternatif: Alternatif[],
-  bobot: number[]
-): HasilSAW[] {
-  // Transpose matrix (kolom-kolom nilai per kriteria)
-  const matrixT: number[][] = Array.from({ length: kriteria.length }, (_, i) =>
-    alternatif.map((alt) => alt.nilai[i])
-  );
+    for (let j = 0; j < alternatif.length; j++) {
+      normal[j][i] = i === 0 || i === 4
+        ? min / alternatif[j].nilai[i]     // Cost
+        : alternatif[j].nilai[i] / max;    // Benefit
+    }
+  }
 
-  // Normalisasi dan hitung skor total
-  const norm = alternatif.map((alt) => {
-    const normVals = alt.nilai.map((v, j) => {
-      const column = matrixT[j];
-      if (kriteria[j].tipe === 'benefit') {
-        const max = Math.max(...column);
-        return v / max;
-      } else {
-        const min = Math.min(...column);
-        return min / v;
-      }
-    });
+  for (let i = 0; i < alternatif.length; i++) {
+    const nilai = normal[i].reduce((acc, n, idx) => acc + n * bobot[idx], 0);
+    result.push({ nama: alternatif[i].nama, nilai: parseFloat(nilai.toFixed(4)) });
+  }
 
-    const total = normVals.reduce((sum, val, idx) => sum + val * bobot[idx], 0);
-
-    return {
-      nama: alt.nama,
-      nilai: total,
-    };
-  });
-
-  // Ranking berdasarkan skor tertinggi
-  const sorted = norm
-    .sort((a, b) => b.nilai - a.nilai)
-    .map((v, i) => ({
-      ...v,
-      ranking: i + 1,
-      nilai: parseFloat(v.nilai.toFixed(4)),
-    }));
-
-  return sorted;
+  result.sort((a, b) => b.nilai - a.nilai);
+  return result;
 }

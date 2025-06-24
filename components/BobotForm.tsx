@@ -1,56 +1,69 @@
 'use client';
 
 import { useState } from 'react';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
 
-export default function BobotForm({
-    onSubmit,
-    bobot,
-    setBobot,
-}: {
-    onSubmit: (bobot: number[]) => void;
-    bobot: number[];
-    setBobot: (bobot: number[]) => void;
-}) {
-    const [error, setError] = useState('');
+type BobotFormProps = {
+  bobot: number[];
+  setBobot: (bobot: number[]) => void;
+  onSubmit: (bobot: number[]) => void;
+};
 
-    const handleChange = (i: number, value: string) => {
-        const updated = [...bobot];
-        updated[i] = parseFloat(value);
-        setBobot(updated);
-    };
+export default function BobotForm({ bobot, setBobot, onSubmit }: BobotFormProps) {
+  const kriteriaLabels = ['Tarif', 'Kecepatan', 'Servis', 'Kelancaran', 'FUP'];
+  const [error, setError] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        const total = bobot.reduce((a, b) => a + b, 0);
-        if (Math.abs(total - 1) > 0.001) {
-            setError('Total bobot harus = 1');
-            return;
-        }
-        setError('');
-        onSubmit(bobot);
-    };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
 
-    return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            {['Tarif', 'Kecepatan', 'Service', 'Kestabilan', 'FUP'].map((label, i) => (
-                <div key={i} className="grid gap-2">
-                    <Label>{label}</Label>
-                    <Input
-                        type="number"
-                        step="0.01"
-                        value={bobot[i]}
-                        onChange={(e) => handleChange(i, e.target.value)}
-                        required
-                    />
-                </div>
-            ))}
-            {error && <p className="text-red-600 text-sm">{error}</p>}
-            <div className="flex justify-center">
-                <Button type="submit" className="">Hitung</Button>
-            </div>
-        </form>
-    );
+    const total = bobot.reduce((sum, val) => sum + val, 0);
+    if (Math.abs(total - 1) > 0.001) {
+      setError('Jumlah total bobot harus sama dengan 1.');
+      return;
+    }
+
+    setError('');
+    onSubmit(bobot);
+  };
+
+  const handleReset = () => {
+    setBobot(new Array(bobot.length).fill(0));
+    setError('');
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-2">
+      <div className="grid grid-cols-5 gap-2">
+        {bobot.map((b, i) => (
+          <div key={i} className="flex flex-col items-start">
+            <label className="text-xs text-muted-foreground mb-1">
+              {kriteriaLabels[i]}
+            </label>
+            <Input
+              type="number"
+              step="0.01"
+              value={b}
+              onChange={(e) => {
+                const updated = [...bobot];
+                updated[i] = parseFloat(e.target.value);
+                setBobot(updated);
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
+      {error && (
+        <p className="text-sm text-red-500 font-medium">{error}</p>
+      )}
+
+      <div className="flex gap-2 mt-2 items-center justify-between">
+        <Button type="submit" className="w-70">Hitung Ranking</Button>
+        <Button type="button" variant="outline" className="w-70" onClick={handleReset}>
+          Reset
+        </Button>
+      </div>
+    </form>
+  );
 }
